@@ -10,23 +10,14 @@ const config = {
   exclude: ['ca cert'], // components to exclude, can be partial strings
   types: ['defect'],
   versions: [
-    {number: 66, mergedate: '2018-12-10', betadate: '2019-01-28'},
-    {number: 67, mergedate: '2019-01-28', betadate: '2019-03-18'},
-    {number: 68, mergedate: '2019-03-18', betadata: '2019-05-13'}
+    {number: 67, mergedate: '2019-01-21'}
   ]
 };
-var   data = {stats: false, message: 'not ready, please refetch'};
-var   nightly = config.versions[2].number;
 
 // Method to periodically run to generate stats
 
 function update() {
   var myStats = new GenerateStats(config);
-
-  myStats.then(stats => {
-    console.log(stats.report);
-    data = { message: 'ok', nextUpdate: j.nextInvocation(), lastUpdate: new Date(), stats: stats};
-  });
 }
 
 // update at midnight
@@ -43,33 +34,12 @@ var app = express();
 
 app.use(express.static('public'));
 
-app.get("/", function (request, response) {
+app.get("/", (request, response) => {
   response.sendFile(__dirname + '/views/index.html');
 });
 
-app.get("/counts", function(request, response) {
-  response.sendFile(__dirname + '/views/counts.html');
-});
-
-app.get("/summary", function(request, response) {
-  response.sendFile(__dirname + '/views/summary.html');
-});
-
-app.get("/text", function(request, response) {
-  var msg;
-
-  if (data.message === 'ok') {
-    msg = `I'm afraid we aren't triaged yet.
-          There are ${data.stats.versions[nightly].untriaged.count} untriaged bugs in nightly.`;
-  } else {
-    msg = "I'm still collecting data, please try again later.";
-  }
-  
-  response.send(msg);
-});
-
-app.get("/data", function (request, response) {
-  response.send(data);
+app.get("/component", (request, response) => {
+  response.sendFile(__dirname + '/out/component.json');
 });
 
 // listen for requests :)
