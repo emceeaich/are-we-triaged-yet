@@ -142,7 +142,7 @@ var GenerateStats = function(config) {
                             'Total': report[reportName][category].total
                         };
                     }).sort((a, b) => { return (b['> W'] - a['> W']); });
-                    // console.log(asTable(formatted));
+                    console.log(asTable(formatted));
                     write_report(reportName, formatted);
 
                 });
